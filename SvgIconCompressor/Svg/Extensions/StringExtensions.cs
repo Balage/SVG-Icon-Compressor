@@ -4,30 +4,24 @@ namespace WebSymbolsFontGenerator.Svg.Extensions
 {
     public static class StringExtensions
     {
-        public static string NumberJoin(this string[] list, bool compress)
+        public static string NumberJoin(this string[] list)
         {
             if (list.Length == 0)
                 return "";
 
-            if (compress)
-            {
-                var sb = new StringBuilder();
-                sb.Append(list[0]);
+            var sb = new StringBuilder();
+            sb.Append(list[0]);
 
-                for (int i = 1; i < list.Length; i++)
+            for (int i = 1; i < list.Length; i++)
+            {
+                if (list[i].Length == 0 || list[i][0] != '-')
                 {
-                    if (!(compress && list[i].Length != 0 && list[i][0] == '-'))
-                        sb.Append(' ');
-
-                    sb.Append(list[i]);
+                    sb.Append(' ');
                 }
+                sb.Append(list[i]);
+            }
 
-                return sb.ToString();
-            }
-            else
-            {
-                return string.Join(" ", list);
-            }
+            return sb.ToString();
         }
 
         public static string NormalizePath(this string path)

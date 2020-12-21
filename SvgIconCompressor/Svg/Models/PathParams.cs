@@ -7,7 +7,7 @@ namespace WebSymbolsFontGenerator.Svg.Models
     {
         void ApplyOffset(PointF offset);
         void ApplyScale(PointF scale);
-        string ToString(PointF offset, float scale, bool compress);
+        string ToString(PointF offset, float scale, int decimalPlaces);
     }
 
     public class PathParamX : IPathParam
@@ -29,9 +29,9 @@ namespace WebSymbolsFontGenerator.Svg.Models
             X *= scale.X;
         }
 
-        public string ToString(PointF offset, float scale, bool compress)
+        public string ToString(PointF offset, float scale, int decimalPlaces)
         {
-            return SvgUtils.NumberToString(X * scale + offset.X, compress);
+            return SvgUtils.NumberToString(X * scale + offset.X, decimalPlaces);
         }
     }
 
@@ -54,9 +54,9 @@ namespace WebSymbolsFontGenerator.Svg.Models
             Y *= scale.Y;
         }
 
-        public string ToString(PointF offset, float scale, bool compress)
+        public string ToString(PointF offset, float scale, int decimalPlaces)
         {
-            return SvgUtils.NumberToString(Y * scale + offset.Y, compress);
+            return SvgUtils.NumberToString(Y * scale + offset.Y, decimalPlaces);
         }
     }
 
@@ -83,12 +83,12 @@ namespace WebSymbolsFontGenerator.Svg.Models
             Y *= scale.Y;
         }
 
-        public string ToString(PointF offset, float scale, bool compress)
+        public string ToString(PointF offset, float scale, int decimalPlaces)
         {
             return new string[] {
-                SvgUtils.NumberToString(X * scale + offset.X, compress),
-                SvgUtils.NumberToString(Y * scale + offset.Y, compress)
-            }.NumberJoin(compress);
+                SvgUtils.NumberToString(X * scale + offset.X, decimalPlaces),
+                SvgUtils.NumberToString(Y * scale + offset.Y, decimalPlaces)
+            }.NumberJoin();
         }
     }
 
@@ -127,17 +127,17 @@ namespace WebSymbolsFontGenerator.Svg.Models
             EndY *= scale.Y;
         }
 
-        public string ToString(PointF offset, float scale, bool compress)
+        public string ToString(PointF offset, float scale, int decimalPlaces)
         {
             return new string[] {
-                SvgUtils.NumberToString(RadiusX * scale, compress),
-                SvgUtils.NumberToString(RadiusY * scale, compress),
-                SvgUtils.NumberToString(Rotation, compress),
-                SvgUtils.NumberToString(Arc, compress),
-                SvgUtils.NumberToString(Sweep, compress),
-                SvgUtils.NumberToString(EndX * scale + offset.X, compress),
-                SvgUtils.NumberToString(EndY * scale + offset.Y, compress)
-            }.NumberJoin(compress);
+                SvgUtils.NumberToString(RadiusX * scale, decimalPlaces),
+                SvgUtils.NumberToString(RadiusY * scale, decimalPlaces),
+                SvgUtils.NumberToString(Rotation, decimalPlaces),
+                SvgUtils.NumberToString(Arc, decimalPlaces),
+                SvgUtils.NumberToString(Sweep, decimalPlaces),
+                SvgUtils.NumberToString(EndX * scale + offset.X, decimalPlaces),
+                SvgUtils.NumberToString(EndY * scale + offset.Y, decimalPlaces)
+            }.NumberJoin();
         }
     }
 }

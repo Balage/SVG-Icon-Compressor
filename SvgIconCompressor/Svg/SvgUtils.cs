@@ -19,16 +19,24 @@ namespace WebSymbolsFontGenerator.Svg
         }
 
         // Print float locale independently
-        public static string NumberToString(float number, bool compress = false)
+        public static string NumberToString(float number, int decimalPlaces = 2)
         {
-            var temp = number.ToString("0.00", CultureInfo.InvariantCulture);
+            if (decimalPlaces < 0)
+                throw new ArgumentException("Decimal places must be at least 0.");
 
-            // Remove decimal zeros
-            temp = temp.TrimEnd('0').TrimEnd('.');
+            var temp = number.ToString($"F{decimalPlaces}", CultureInfo.InvariantCulture);
 
-            // Can omit starting 0
-            if (compress && temp.StartsWith("0."))
-                return temp.Substring(1);
+            if (decimalPlaces > 0)
+            {
+                // Remove decimal zeros
+                temp = temp.TrimEnd('0').TrimEnd('.');
+
+                // Can omit starting 0
+                if (temp.StartsWith("0."))
+                {
+                    temp = temp[1..];
+                }
+            }
 
             return temp;
         }

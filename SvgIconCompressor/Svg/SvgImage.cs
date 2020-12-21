@@ -49,7 +49,7 @@ namespace WebSymbolsFontGenerator.Svg
             _pathCommands.ForEach(cmd => cmd.ApplyOffset(originalOffset));
         }
 
-        public void SaveToFile(string fileName, Size canvasSize)
+        public void SaveToFile(string fileName, Size canvasSize, int decimalPlaces = 2)
         {
             XNamespace xmlns = "http://www.w3.org/2000/svg";
 
@@ -64,7 +64,7 @@ namespace WebSymbolsFontGenerator.Svg
                     new XAttribute("height", $"{canvasSize.Height}px"),
                     new XAttribute("viewBox", $"0 0 {canvasSize.Width} {canvasSize.Height}"),
 
-                    GetScaledPaths(canvasSize, true).Select(x => x.ToXmlElement(xmlns))
+                    GetScaledPaths(canvasSize, decimalPlaces).Select(x => x.ToXmlElement(xmlns))
                 )
             );
             var docType = new XDocumentType("svg", "-//W3C//DTD SVG 1.1//EN", "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd", null);
@@ -74,16 +74,16 @@ namespace WebSymbolsFontGenerator.Svg
 
         public string ToHtmlEmbedString(Size canvasSize, int decimalPlaces = 2)
         {
-            var svgPath = string.Join("", GetScaledPaths(canvasSize, true).Select(x => x.ToXmlElementString()));
+            var svgPath = string.Join("", GetScaledPaths(canvasSize, decimalPlaces).Select(x => x.ToXmlElementString()));
             return $"<svg viewBox=\"0 0 {canvasSize.Width} {canvasSize.Height}\">{svgPath}</svg>";
         }
 
-        public string ToCssEmbedString(Size canvasSize)
+        public string ToCssEmbedString(Size canvasSize, int decimalPlaces = 2)
         {
             // Thoughts on gzip: https://base64.guru/developers/data-uri/gzip
             // Embeded SVG with IE compatibility: https://codepen.io/tigt/post/optimizing-svgs-in-data-uris
 
-            var path = string.Join("", GetScaledPaths(canvasSize, true).Select(x => x.ToXmlElementString()));
+            var path = string.Join("", GetScaledPaths(canvasSize, decimalPlaces).Select(x => x.ToXmlElementString()));
             var svg = $"<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 {canvasSize.Width} {canvasSize.Height}'>{path}</svg>";
             return $"url(\"data:image/svg+xml,{StringToUrlSafe(svg)}\")";
         }
@@ -96,7 +96,7 @@ namespace WebSymbolsFontGenerator.Svg
                 .Replace(">", "%3E");
         }
 
-        private IEnumerable<PathElement> GetScaledPaths(Size canvasSize, bool compress)
+        private IEnumerable<PathElement> GetScaledPaths(Size canvasSize, int decimalPlaces)
         {
             float scale;
             PointF offset;
@@ -120,7 +120,7 @@ namespace WebSymbolsFontGenerator.Svg
 
             foreach (var pathCommand in _pathCommands)
             {
-                var path = pathCommand.ToString(offset, scale, compress);
+                var path = pathCommand.ToString(offset, scale, decimalPlaces);
 
                 if (pathCommand.Drawing != previousDrawingMode)
                 {
@@ -129,7 +129,6 @@ namespace WebSymbolsFontGenerator.Svg
                 }
 
                 sb.Append(path);
-                if (!compress) sb.Append(' ');
                 previousDrawingMode = pathCommand.Drawing;
             }
 

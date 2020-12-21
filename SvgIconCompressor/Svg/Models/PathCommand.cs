@@ -35,15 +35,14 @@ namespace WebSymbolsFontGenerator.Svg.Models
             Params.ForEach(p => p.ApplyScale(scale));
         }
 
-        public string ToString(PointF offset, float scale, bool compress)
+        public string ToString(PointF offset, float scale, int decimalPlaces = 2)
         {
             if (Params.Any())
             {
                 if (IsRelative)
                     offset = new PointF();
 
-                return string.Concat(Key, compress ? "" : " ",
-                    Params.Select(p => p.ToString(offset, scale, compress)).ToArray().NumberJoin(compress));
+                return $"{Key}{Params.Select(p => p.ToString(offset, scale, decimalPlaces)).ToArray().NumberJoin()}";
             }
             else
             {

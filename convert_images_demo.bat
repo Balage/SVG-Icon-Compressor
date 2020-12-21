@@ -1,2 +1,2 @@
-dotnet bin/netcoreapp2.0/SvgIconCompressor.dll 64 "sample_data" "output"
+dotnet bin/netcoreapp3.1/SvgIconCompressor.dll 512 0 "sample_data" "output"
 pause

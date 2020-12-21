@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 
@@ -17,15 +18,21 @@ namespace WebSymbolsFontGenerator.Helpers
 
 		public static void GenerateEmbedSheetHtml(string targetFolder, IEnumerable<RenderedIcon> icons)
 		{
-			File.WriteAllText(Path.Combine(targetFolder, "__embedded-icons-sheet.html"), $@"<html>
+			File.WriteAllText(Path.Combine(targetFolder, "embedded-icons-sheet.html"), $@"<html>
 <head>
 	<style type='text/css'>
+		* {{
+			box-sizing: border-box;
+			font-family: Arial, Helvetica, sans-serif;
+			font-size: 16px;
+		}}
+		
 		body {{
 			background: #ccc;
 		}}
 
-		.table {{
-			max-width: 990px;
+		.holder {{
+			max-width: 90%;
 			margin: 0 auto;
 		}}
 
@@ -34,61 +41,74 @@ namespace WebSymbolsFontGenerator.Helpers
 		}}
 		
 		.row {{
+			display: flex;
 			position: relative;
-			display: block;
-			box-sizing: border-box;
 			float: left;
 			width: 100%;
 			margin: 6px 0;
-			padding: 4px 4px 4px 104px;
-			min-height: 102px;
+			padding: 12px;
 			border: 1px solid #999;
-			font-size: 18px;
 			background: #eee;
-			cursor: pointer;
 			box-shadow: 2px 2px 2px #bbb;
 			border-radius: 3px;
 		}}
-
-		.row svg {{
-			position: absolute;
+		
+		.col-preview {{
+			flex: 0 0 128px;
+		}}
+		
+		.col-preview svg {{
 			display: block;
-			width: 64px;
-			height: 64px;
-			left: 20px;
-			top: 8px;
-		}}
-
-		.row pre {{
-			margin: 0;
-			font-size: 14px;
-			white-space: pre-wrap;
-			white-space: -moz-pre-wrap;
-			white-space: -pre-wrap;
-			white-space: -o-pre-wrap;
-			word-break: break-all;
-			border: 1px solid #999;
-			background: white;
-			border-radius: 3px;
-			padding: 8px;
+			width: 128px;
+			height: 128px;
+			float: left;
 		}}
 		
-		.row pre + pre {{
-			margin-top: 4px;
-		}}
-		
-		.row .caption {{
-			position: absolute;
-			left: 4px;
-			top: 78px;
-			width: 96px;
+		.col-preview span {{
+			width: 100%;
+			margin-top: 12px;
+			float: left;
 			font-size: 14px;
+			font-weight: bold;
 			white-space: pre-wrap;
 			white-space: -moz-pre-wrap;
 			white-space: -pre-wrap;
 			white-space: -o-pre-wrap;
 			word-break: break-all;
 			text-align: center;
+		}}
+		
+		.col-data {{
+			flex: 1 1 0px;
+			margin: 0 0 0 12px;
+		}}
+		
+		.col-data .vertical {{
+			display: flex;
+			flex-direction: column;
+			height: 100%;
+		}}
+		
+		.col-data .vertical pre {{
+			flex: 1 0 auto;
+			width: 100%;
+			margin: 0 0 12px 0;
+			padding: 8px;
+			background: white;
+			border: 1px solid #999;
+			border-radius: 3px;
+			font-family: Consolas, 'Courier New';
+			white-space: pre-wrap;
+			white-space: -moz-pre-wrap;
+			white-space: -pre-wrap;
+			white-space: -o-pre-wrap;
+			word-break: break-all;
+			cursor: pointer;
+		}}
+		
+		.col-data .vertical span {{
+			flex: 0 0 auto;
+			font-size: 14px;
 		}}
 	</style>
 	<script type='text/javascript'>
@@ -102,11 +122,22 @@ namespace WebSymbolsFontGenerator.Helpers
 	</script>
 </head>
 <body>
-	<div class='table'>{string.Join("", icons.Select(icon => $"\n\t\t<div class='row'>{icon.EmbededHtml}<div class='caption'>{icon.Name}</div><pre onclick='clip(this);'>{EscapeHtml(icon.EmbededHtml)}</pre><pre onclick='clip(this);'>{EscapeHtml(icon.EmbededCss)}</pre></div>"))}
+	<div class=""holder"">{string.Join("", icons.Select(icon => $"\n\t\t{RenderRow(icon)}"))}
 	</div>
 </body>
 </html>");
 		}
+
+		private static string RenderRow(RenderedIcon icon)
+        {
+			return string.Concat(
+				@$"<div class=""row"">",
+					@$"<div class=""col-preview"">{icon.EmbededHtml}<span>{icon.Name}</span></div>",
+					@$"<div class=""col-data""><div class=""vertical""><pre onclick=""clip(this);"">{EscapeHtml(icon.EmbededHtml)}</pre><span>Embedded HTML ({icon.EmbededHtml.Length.ToString("N0", CultureInfo.InvariantCulture)} bytes)</span></div></div>",
+					@$"<div class=""col-data""><div class=""vertical""><pre onclick=""clip(this);"">{EscapeHtml(icon.EmbededCss)}</pre><span>Embedded CSS ({icon.EmbededCss.Length.ToString("N0", CultureInfo.InvariantCulture)} bytes)</span></div></div>",
+				"</div>"
+			);
+        }
 
 		private static string EscapeHtml(string input)
 		{
