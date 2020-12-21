@@ -72,12 +72,20 @@ namespace WebSymbolsFontGenerator
             // Save icon files
             icons.ForEach(icon => icon.SaveToFile(Path.Combine(targetFolder, $"{icon.Name}.svg"), outputImageSize));
 
-            // Save embed data files
-            icons.ForEach(icon => File.WriteAllText(Path.Combine(targetFolder, $"{icon.Name}.embed.svg"), icon.GetEmbedString(outputImageSize)));
+            // Save HTML embed data files
+            icons.ForEach(icon => File.WriteAllText(Path.Combine(targetFolder, $"{icon.Name}.embed.html"), icon.ToHtmlEmbedString(outputImageSize)));
+
+            // Save CSS embed data files
+            icons.ForEach(icon => File.WriteAllText(Path.Combine(targetFolder, $"{icon.Name}.embed.css"), icon.ToCssEmbedString(outputImageSize)));
 
             // Generate embedded icons copy-sheet
-            TestCreator.GenerateEmbedSheetHtml(targetFolder,
-                icons.Select(icon => new Tuple<string, string>(icon.GetEmbedString(outputImageSize), icon.Name)));
+            var renderedIcons = icons.Select(icon => new TestCreator.RenderedIcon
+            {
+                Name = icon.Name,
+                EmbededHtml = icon.ToHtmlEmbedString(outputImageSize),
+                EmbededCss = icon.ToCssEmbedString(outputImageSize)
+            });
+            TestCreator.GenerateEmbedSheetHtml(targetFolder, renderedIcons);
         }
     }
 }

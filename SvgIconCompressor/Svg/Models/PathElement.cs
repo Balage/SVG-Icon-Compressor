@@ -13,7 +13,7 @@ namespace SvgIconCompressor.Svg.Models
         {
             if (!drawingMode.HasFlag(DrawingMode.HasStroke))
             {
-                drawingMode = drawingMode & ~(
+                drawingMode &= ~(
                     DrawingMode.StrokeLinecapRound |
                     DrawingMode.StrokeLinecapSquare |
                     DrawingMode.StrokeLinejoinRound |

@@ -8,9 +8,16 @@ namespace WebSymbolsFontGenerator.Helpers
 {
 	public static class TestCreator
 	{
-		public static void GenerateEmbedSheetHtml(string targetFolder, IEnumerable<Tuple<string, string>> embeddedStrings)
+		public class RenderedIcon
+        {
+			public string Name { get; set; }
+			public string EmbededHtml { get; set; }
+			public string EmbededCss { get; set; }
+		}
+
+		public static void GenerateEmbedSheetHtml(string targetFolder, IEnumerable<RenderedIcon> icons)
 		{
-			File.WriteAllText(Path.Combine(targetFolder, "embedded-icons-sheet.html"), $@"<html>
+			File.WriteAllText(Path.Combine(targetFolder, "__embedded-icons-sheet.html"), $@"<html>
 <head>
 	<style type='text/css'>
 		body {{
@@ -29,10 +36,12 @@ namespace WebSymbolsFontGenerator.Helpers
 		.row {{
 			position: relative;
 			display: block;
+			box-sizing: border-box;
 			float: left;
-			margin: 6px;
+			width: 100%;
+			margin: 6px 0;
 			padding: 4px 4px 4px 104px;
-			min-height: 92px;
+			min-height: 102px;
 			border: 1px solid #999;
 			font-size: 18px;
 			background: #eee;
@@ -63,7 +72,11 @@ namespace WebSymbolsFontGenerator.Helpers
 			border-radius: 3px;
 			padding: 8px;
 		}}
-
+		
+		.row pre + pre {{
+			margin-top: 4px;
+		}}
+		
 		.row .caption {{
 			position: absolute;
 			left: 4px;
@@ -89,7 +102,7 @@ namespace WebSymbolsFontGenerator.Helpers
 	</script>
 </head>
 <body>
-	<div class='table'>{string.Join("", embeddedStrings.Select(embed => $"\n\t\t<div class='row'>{embed.Item1}<div class='caption'>{embed.Item2}</div><pre onclick='clip(this);'>{EscapeHtml(embed.Item1)}</pre></div>"))}
+	<div class='table'>{string.Join("", icons.Select(icon => $"\n\t\t<div class='row'>{icon.EmbededHtml}<div class='caption'>{icon.Name}</div><pre onclick='clip(this);'>{EscapeHtml(icon.EmbededHtml)}</pre><pre onclick='clip(this);'>{EscapeHtml(icon.EmbededCss)}</pre></div>"))}
 	</div>
 </body>
 </html>");

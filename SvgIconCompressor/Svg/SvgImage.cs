@@ -7,6 +7,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Web;
 using System.Xml.Linq;
 using WebSymbolsFontGenerator.Svg.Extensions;
 using WebSymbolsFontGenerator.Svg.Models;
@@ -19,8 +20,8 @@ namespace WebSymbolsFontGenerator.Svg
     {
         public string Name { get; }
 
-        private SizeF _originalSize;
-        private List<PathCommand> _pathCommands;
+        private readonly SizeF _originalSize;
+        private readonly List<PathCommand> _pathCommands;
 
 
         public SvgImage(string fileName)
@@ -71,10 +72,28 @@ namespace WebSymbolsFontGenerator.Svg
             doc.Save(fileName);
         }
 
-        public string GetEmbedString(Size canvasSize)
+        public string ToHtmlEmbedString(Size canvasSize, int decimalPlaces = 2)
         {
+            var svgPath = string.Join("", GetScaledPaths(canvasSize, true).Select(x => x.ToXmlElementString()));
+            return $"<svg viewBox=\"0 0 {canvasSize.Width} {canvasSize.Height}\">{svgPath}</svg>";
+        }
+
+        public string ToCssEmbedString(Size canvasSize)
+        {
+            // Thoughts on gzip: https://base64.guru/developers/data-uri/gzip
+            // Embeded SVG with IE compatibility: https://codepen.io/tigt/post/optimizing-svgs-in-data-uris
+
             var path = string.Join("", GetScaledPaths(canvasSize, true).Select(x => x.ToXmlElementString()));
-            return $"<svg viewBox=\"0 0 {canvasSize.Width} {canvasSize.Height}\">{path}</svg>";
+            var svg = $"<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 {canvasSize.Width} {canvasSize.Height}'>{path}</svg>";
+            return $"url(\"data:image/svg+xml,{StringToUrlSafe(svg)}\")";
+        }
+
+        private static string StringToUrlSafe(string input)
+        {
+            return input
+                .Replace('"', '\'')
+                .Replace("<", "%3C")
+                .Replace(">", "%3E");
         }
 
         private IEnumerable<PathElement> GetScaledPaths(Size canvasSize, bool compress)
