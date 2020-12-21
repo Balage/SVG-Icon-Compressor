@@ -15,15 +15,15 @@ namespace WebSymbolsFontGenerator
 
         static void Main(string[] args)
         {
-            if (!int.TryParse(args.Length > 0 ? args[0] : $"{DefaultImageSize}", out int imageSize))
+            if (!int.TryParse(args.Length > 0 ? args[0] : $"{DefaultImageSize}", out int imageSize) || imageSize < 1)
             {
-                Console.WriteLine("Invalid image size, must be positive number!");
+                Console.WriteLine("Invalid input, image size must be positive number!");
                 return;
             }
 
-            if (!int.TryParse(args.Length > 1 ? args[1] : $"{DefaultDecimalPlaces}", out int decimalPlaces))
+            if (!int.TryParse(args.Length > 1 ? args[1] : $"{DefaultDecimalPlaces}", out int decimalPlaces) || decimalPlaces < 0)
             {
-                Console.WriteLine("Invalid image size, must be positive number!");
+                Console.WriteLine("Invalid input, number of decimal places must be 0 or more!");
                 return;
             }
 
