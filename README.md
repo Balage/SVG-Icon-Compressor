@@ -3,10 +3,10 @@ This is for monochrome icons only. It removes everything and reduces the image t
 
 There are 3 outputs:
 
-- Regular SVG file, monochrome, with a single path object.
-- An HTML file containing the embedded variants:
--- Embedded SVG for HTML
--- Embedded SVG for CSS
+* Regular SVG file, monochrome, with a single path object.
+* An HTML file containing the embedded variants:
+  * Embedded SVG for HTML
+  * Embedded SVG for CSS
 
 ## Examples on Output
 
@@ -26,13 +26,13 @@ This works in all major browsers, even in Internet Explorer. [More on that...](h
 
 ## Usage
 ```batchfile
-dotnet SvgIconCompressor.dll [size] [decimal-places] [source] [destination]
+SvgIconCompressor.exe [size] [decimal-places] [source] [destination]
 ```
 
-- [size] Optional. Resize canvas to this size. Image will be centered and scaled to fit. Default value is 512.
-- [decimal-places] Optional. Vector scalars are rounded with specified number of decimal places. Default is 2.
-- [source] Optional. Source folder or file. Default is current working directory.
-- [target] Optional. Default is "[source]/result". If defined to be same as source, it will always create a subdirectory.
+* [size] Optional. Resize canvas to this size. Image will be centered and scaled to fit. Default value is 512.
+* [decimal-places] Optional. Vector scalars are rounded with specified number of decimal places. Default is 2.
+* [source] Optional. Source folder or file. Default is current working directory.
+* [target] Optional. Default is "[source]/result". If defined to be same as source, it will always create a subdirectory.
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
