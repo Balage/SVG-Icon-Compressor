@@ -34,5 +34,8 @@ SvgIconCompressor.exe [size] [decimal-places] [source] [destination]
 * [source] Optional. Source folder or file. Default is current working directory.
 * [target] Optional. Default is "[source]/result". If defined to be same as source, it will always create a subdirectory.
 
+## Missing/Planned Features
+* Matrix transformations
+
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
